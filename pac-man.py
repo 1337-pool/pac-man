@@ -1,4 +1,6 @@
 from src.config.loader import load_config, ParsingError
+from mazegenerator import MazeGenerator
+
 
 
 
@@ -10,3 +12,6 @@ except ParsingError as e:
     exit()
 
 print(config_dic)
+
+# maze = MazeGenerator(seed=42)
+# print(maze.maze)
