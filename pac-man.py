@@ -1,17 +1,11 @@
 from src.config.loader import load_config, ParsingError
+from src.config.schema import apply_defaults
 from mazegenerator import MazeGenerator
+import sys
 
 
 
+config = load_config(sys.argv[1])
+config = apply_defaults(config)
 
-try:
-    config_dic: dict = load_config("config.json")
-
-except ParsingError as e:
-    print(e)
-    exit()
-
-print(config_dic)
-
-# maze = MazeGenerator(seed=42)
-# print(maze.maze)
+print(config)
