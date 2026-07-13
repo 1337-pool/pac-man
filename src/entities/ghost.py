@@ -10,6 +10,7 @@ class Ghost(Entity):
         super().__init__(x, y)
         self.home: tuple[int, int] = home
         self.state: GhostState = "chasing"
+        self.eaten_at: float = 0.0
 
     def make_edible(self) -> None:
         if self.state != "eaten":
@@ -17,8 +18,11 @@ class Ghost(Entity):
 
     def get_eaten(self) -> None:
         self.state = "eaten"
-        time.sleep(10)
-        self.respawn()
+        self.eaten_at = time.time()
+
+    def update(self, respawn_delay: float = 10.0) -> None:
+        if self.state == "eaten" and time.time() - self.eaten_at >= respawn_delay:
+            self.respawn()
 
     def respawn(self) -> None:
         self.x = self.home[0]
