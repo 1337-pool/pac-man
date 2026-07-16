@@ -17,10 +17,13 @@ YELLOW: tuple[int, int, int] = (255, 255, 0)
 MUTED: tuple[int, int, int] = (136, 136, 136)
 BORDER: tuple[int, int, int] = (51, 51, 51)
 
+MAZE_BLUE: tuple[int, int, int] = (33, 33, 255)
+MAZE_BLUE_DIM: tuple[int, int, int] = (20, 20, 160)
 GHOST_RED: tuple[int, int, int] = (255, 0, 0)
 GHOST_PINK: tuple[int, int, int] = (255, 184, 232)
 GHOST_CYAN: tuple[int, int, int] = (0, 255, 255)
 GHOST_ORANGE: tuple[int, int, int] = (255, 163, 71)
+GHOST_EDIBLE: tuple[int, int, int] = (33, 33, 222)
 GHOST_COLORS: tuple[tuple[int, int, int], ...] = (
     GHOST_RED, GHOST_PINK, GHOST_CYAN, GHOST_ORANGE,
 )
