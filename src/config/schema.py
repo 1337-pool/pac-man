@@ -16,7 +16,7 @@ MIN_DIMENSION = 9
 MAX_DIMENSION = 50
 
 DEFAULTS: Dict[str, Any] = {
-    "highscore_filename": "highscores.json",
+    "highscore_filename": "highscore.json",
     "levels": [
         {"width": DEFAULT_WIDTH, "height": DEFAULT_HEIGHT}
         for _ in range(DEFAULT_LEVEL_COUNT)

@@ -1,10 +1,11 @@
 from .entity import Entity
 
 class Player(Entity):
-    def __init__(self, x: int, y: int, lives: int) -> None:
+    def __init__(self, x: int, y: int, lives: int, img: str) -> None:
         super().__init__(x, y)
         self.lives: int = lives
         self.score: int = 0
+        self.img: str = img
 
     def respawn(self, x: int, y: int) -> None:
 
