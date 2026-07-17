@@ -39,7 +39,7 @@ class Ghost(Entity):
         home: tuple[int, int],
         img: str,
         ID: int,
-        move_frames: int = 8,
+        move_frames: int = 15,
     ) -> None:
         super().__init__(x, y, move_frames)
         self.name: str = name

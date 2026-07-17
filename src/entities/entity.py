@@ -13,7 +13,7 @@ class Entity:
         self,
         x: int,
         y: int,
-        move_frames: int = 8,
+        move_frames: int = 15,
     ) -> None:
         self.x: int = x
         self.y: int = y
@@ -35,12 +35,18 @@ class Entity:
         return not maze[self.y][self.x][direction]
 
     def move(self, maze: list, direction: str) -> bool:
-        """Start a move in *direction* if possible and not already moving.
-
-        Returns True if the move was started.
-        """
+        # Allow instant 180-degree turns even if currently moving
         if self._move_timer > 0:
+            opposites = {"north": "south", "south": "north", "east": "west", "west": "east"}
+            if direction == opposites.get(self.direction):
+                # Swap from and to, and swap logical x/y
+                self._from_x, self._to_x = self._to_x, self._from_x
+                self._from_y, self._to_y = self._to_y, self._from_y
+                self.x, self.y = int(self._from_x), int(self._from_y)
+                self.direction = direction
+                return True
             return False
+
         if not self.can_move(maze, direction):
             return False
 

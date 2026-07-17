@@ -59,7 +59,7 @@ def main():
     maze = build_level_maze(COLS, ROWS, seed=42)
 
     mid_x, mid_y = COLS // 2, ROWS // 2
-    player = Player(mid_x, mid_y, 3, "pacman", move_frames=8)
+    player = Player(mid_x, mid_y, 3, "pacman", move_frames=100)
     player.direction = "east"
 
     home = (COLS // 2, ROWS // 2)
@@ -71,7 +71,7 @@ def main():
     ]
     ghosts = [
         Ghost("Blinky", corner_spawns[i][0], corner_spawns[i][1],
-              home, f"ghost_{name}", i, move_frames=12)
+            home, f"ghost_{name}", i, move_frames=15)
         for i, name in enumerate(["red", "pink", "blue", "orange"])
     ]
 

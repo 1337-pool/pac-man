@@ -36,7 +36,7 @@ class Player(Entity):
         y: int,
         lives: int,
         img: str,
-        move_frames: int = 6,
+        move_frames: int = 15,
     ) -> None:
         super().__init__(x, y, move_frames)
         self.lives: int = lives
