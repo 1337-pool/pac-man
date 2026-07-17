@@ -61,7 +61,7 @@ def load_config(path: str) -> dict:
         raise ParsingError(f"OSError: {path}")
 
     except PermissionError:
-        raise ParsingError(f"permission error (n9s f chkhsiya): {path}")
+        raise ParsingError(f"permission error: {path}")
 
     except json.JSONDecodeError as exc:
         raise ParsingError(f"Invalid JSON: {exc}")

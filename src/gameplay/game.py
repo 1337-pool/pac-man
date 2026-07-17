@@ -1,8 +1,3 @@
-"""Main game state machine and loop.
-
-Ties together the UI screens, Level class, and highscore persistence.
-"""
-
 from __future__ import annotations
 
 import pygame
@@ -36,13 +31,11 @@ class Game:
     def __init__(self, config: dict) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption("Pac-Man")
+        pygame.display.set_caption("Pac-Man khaliha 3ala lah")
         self.clock = pygame.time.Clock()
         self.running = True
-
         self.config = config
-        self.highscore_filename = config.get("highscore_filename", "highscore.json")
-        
+        self.highscore_filename = config.get("highscore_filename")
         self.home_screen = HomeScreen(self.highscore_filename)
         self.highscore_screen = HighscoreScreen(self.highscore_filename)
         self.instructions_screen = InstructionsScreen()
@@ -52,7 +45,6 @@ class Game:
         self.current_level_index = 0
         self.next_dir: str | None = None
 
-        # Timer & Player state
         self.level_start_time = 0.0
         self.elapsed_time = 0.0
         self.level_max_time = config.get("level_max_time", 90)
@@ -60,7 +52,7 @@ class Game:
 
         # Cheat state
         self.cheats = CheatManager()
-        self.default_move_frames = 15  # <-- CHANGED FROM 6 TO 10 (Slower normal speed)
+        self.default_move_frames = 15
 
         # Highscore entry state
         self.player_name = ""
@@ -71,8 +63,7 @@ class Game:
             self._handle_events()
             self._update()
             self._draw()
-            self.clock.tick(60)  # 60 FPS
-        
+            self.clock.tick(60)
         pygame.quit()
 
     def _start_level(self, index: int) -> None:
