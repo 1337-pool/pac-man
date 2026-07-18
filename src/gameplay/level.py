@@ -122,15 +122,16 @@ class Level:
         if not self.cheat_manager.freeze_ghosts:
             for ghost in self.ghosts:
                 ghost.update()  # advance eaten/edible timers
-                ghost.think(
-                    self.maze,
-                    self.player.x,
-                    self.player.y,
-                    self.player.direction or "east",
-                    blinky_x,
-                    blinky_y,
-                )
-                ghost.act(self.maze)
+                if not ghost.is_moving:
+                    ghost.think(
+                        self.maze,
+                        self.player.x,
+                        self.player.y,
+                        self.player.direction or "east",
+                        blinky_x,
+                        blinky_y,
+                    )
+                    ghost.act(self.maze)
                 ghost.update_render()
 
         self._check_collisions()
