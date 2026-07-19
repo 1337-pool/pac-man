@@ -52,11 +52,11 @@ class Level:
 
         self.ghosts: list[Ghost] = [
             Ghost(
-                name=GHOST_NAMES[i],
+                # name=GHOST_NAMES[i],
                 x=ghost_corners[i][0],
                 y=ghost_corners[i][1],
                 home=ghost_corners[i],
-                img=_GHOST_SPRITES[i],
+                name=_GHOST_SPRITES[i],
                 ID=i,
             )
             for i in range(4)

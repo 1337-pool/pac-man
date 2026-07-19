@@ -7,7 +7,7 @@ classic ghost colors.
 """
 
 import pathlib
-
+from typing import Any
 import pygame
 
 BLACK: tuple[int, int, int] = (10, 10, 10)
@@ -62,38 +62,22 @@ def body_font(size: int) -> "pygame.font.Font":
     return _body_font_cache[size]
 
 
-_SPRITE_DIR = pathlib.Path(__file__).resolve().parent.parent.parent / "assets" / "images"
 _sprite_cache: dict[tuple[str, int], "pygame.Surface | None"] = {}
 
 
-def load_sprite(name: str, height: int) -> "pygame.Surface | None":
-    """Load and cache a sprite PNG from assets/images, scaled to a height.
-
-    Args:
-        name: File name without extension, e.g. "pacman" or "ghost_red".
-        height: Target height in pixels; width scales to preserve
-            the sprite's aspect ratio.
-
-    Returns:
-        The scaled surface, or None if the sprite can't be loaded
-        (missing file, bad image, no display initialized, etc.) so
-        callers can fall back to a plain shape instead of crashing.
-    """
-    cache_key = (name, height)
-    if cache_key in _sprite_cache:
-        return _sprite_cache[cache_key]
+def load_sprite(name: str, height: int) -> Any:
+    """Load  a sprite PNG from assets/images, scaled to a height."""
 
     surface: "pygame.Surface | None"
     try:
-        path = _SPRITE_DIR / f"{name}.png"
+        path = f"assets/images/{name}.png"
         raw = pygame.image.load(str(path)).convert_alpha()
         scale = height / raw.get_height()
         new_size = (max(1, round(raw.get_width() * scale)), height)
         surface = pygame.transform.smoothscale(raw, new_size)
     except (FileNotFoundError, OSError, pygame.error):
-        surface = None
+        raise Exception(f"ghosts image not found for {name} ghost")
 
-    _sprite_cache[cache_key] = surface
     return surface
 
 

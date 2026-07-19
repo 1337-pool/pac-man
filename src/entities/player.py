@@ -1,11 +1,3 @@
-"""Player entity with smooth movement and classic Pac-Man rendering.
-
-Drawn as a bright yellow circle with a black pie-wedge mouth that
-opens and closes while moving — faithful to the original 1980 arcade
-character.  The mouth is rendered by drawing a full yellow circle
-then overlaying a black filled wedge.
-"""
-
 from __future__ import annotations
 
 import math
@@ -16,7 +8,7 @@ from src.entities.entity import Entity
 from src.ui.theme import BLACK, YELLOW
 
 MOUTH_SPEED = 0.28
-MOUTH_MAX = 0.38
+MOUTH_MAX = 0.8
 MOUTH_MIN = 0.01
 
 _DIR_RAD = {
@@ -62,8 +54,6 @@ class Player(Entity):
             self.lives -= 1
             self.respawn(middle[0], middle[1])
 
-    # -- animation -----------------------------------------------------------
-
     def _tick_mouth(self) -> None:
         self._mouth += MOUTH_SPEED * self._mouth_dir
         if self._mouth >= MOUTH_MAX:
@@ -98,7 +88,7 @@ class Player(Entity):
         pygame.draw.circle(surface, YELLOW, (int(cx), int(cy)), radius)
 
         # Draw black wedge for mouth
-        if mouth > 0.03:
+        if mouth > 0.01:
             a_start = base - mouth
             a_end = base + mouth
             verts = [(cx, cy)]

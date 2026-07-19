@@ -1,8 +1,8 @@
 from typing import Any, Dict, List
 
 DEFAULT_LEVEL_COUNT = 10
-DEFAULT_WIDTH = 21
-DEFAULT_HEIGHT = 21
+DEFAULT_WIDTH = 20
+DEFAULT_HEIGHT = 20
 MIN_DIMENSION = 9
 MAX_DIMENSION = 50
 
@@ -56,8 +56,8 @@ def _validate_levels(raw_levels: Any) -> List[Dict[str, int]]:
                 )
             continue
 
-        width = _clamp_dimension(entry.get("width"), DEFAULT_WIDTH)
-        height = _clamp_dimension(entry.get("height"), DEFAULT_HEIGHT)
+        width = _clamp_dimension(lvl.get("width"), DEFAULT_WIDTH)
+        height = _clamp_dimension(lvl.get("height"), DEFAULT_HEIGHT)
         validated.append({"width": width, "height": height})
 
     while len(validated) < DEFAULT_LEVEL_COUNT:

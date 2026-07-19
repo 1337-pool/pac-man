@@ -1,13 +1,3 @@
-"""Base Entity with grid position and smooth pixel interpolation.
-
-Every entity lives on an integer grid (x, y) but is rendered at a
-smoothly interpolated pixel position (render_x, render_y) that glides
-from one cell to the next over *move_frames* ticks.  While the entity
-is mid-move it is "busy" and cannot start a second move until it
-arrives.
-"""
-
-
 class Entity:
     def __init__(
         self,
@@ -18,34 +8,15 @@ class Entity:
         self.x: int = x
         self.y: int = y
         self.direction: str | None = None
-
-        # Smooth movement state
         self.move_frames: int = move_frames
         self._move_timer: int = 0
-        self._from_x: float = float(x)
-        self._from_y: float = float(y)
-        self._to_x: float = float(x)
-        self._to_y: float = float(y)
         self.render_x: float = float(x)
         self.render_y: float = float(y)
-
-    # -- grid helpers --------------------------------------------------------
 
     def can_move(self, maze: list, direction: str) -> bool:
         return not maze[self.y][self.x][direction]
 
     def move(self, maze: list, direction: str) -> bool:
-        # Allow instant 180-degree turns even if currently moving
-        if self._move_timer > 0:
-            opposites = {"north": "south", "south": "north", "east": "west", "west": "east"}
-            if direction == opposites.get(self.direction):
-                # Swap from and to, and swap logical x/y
-                self._from_x, self._to_x = self._to_x, self._from_x
-                self._from_y, self._to_y = self._to_y, self._from_y
-                self.x, self.y = int(self._from_x), int(self._from_y)
-                self.direction = direction
-                return True
-            return False
 
         if not self.can_move(maze, direction):
             return False
@@ -62,13 +33,9 @@ class Entity:
         elif direction == "south":
             self.y += 1
 
-        self._to_x = float(self.x)
-        self._to_y = float(self.y)
         self._move_timer = self.move_frames
         self.direction = direction
         return True
-
-    # -- smooth interpolation ------------------------------------------------
 
     @property
     def is_moving(self) -> bool:
@@ -79,20 +46,14 @@ class Entity:
         if self._move_timer > 0:
             self._move_timer -= 1
             t = 1.0 - (self._move_timer / self.move_frames)
-            self.render_x = self._from_x + (self._to_x - self._from_x) * t
-            self.render_y = self._from_y + (self._to_y - self._from_y) * t
+            self.render_x = float(self._from_x) + (self.x - self._from_x) * t
+            self.render_y = float(self._from_y) + (self.y - self._from_y) * t
         else:
             self.render_x = float(self.x)
             self.render_y = float(self.y)
 
     def teleport(self, x: int, y: int) -> None:
-        """Instantly move to (x, y) with no interpolation."""
+        """instantly move to (x, y)"""
         self.x = x
         self.y = y
         self._move_timer = 0
-        self._from_x = float(x)
-        self._from_y = float(y)
-        self._to_x = float(x)
-        self._to_y = float(y)
-        self.render_x = float(x)
-        self.render_y = float(y)

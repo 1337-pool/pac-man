@@ -34,7 +34,7 @@ class HomeScreen:
         screen = HomeScreen(highscore_filename="highscore.json")
         ...
         action = screen.handle_event(event)  # "start" | "highscores" |
-                                              # "instructions" | "exit" | None
+                                            # "instructions" | "exit" | None
         screen.draw(surface)
     """
 

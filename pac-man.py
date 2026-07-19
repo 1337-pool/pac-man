@@ -14,9 +14,13 @@ def main() -> None:
     except ParsingError as e:
         print(f"Config Error: {e}")
         sys.exit(1)
-
-    game = Game(config)
-    game.run()
+    
+    try:
+        game = Game(config)
+        game.run()
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
