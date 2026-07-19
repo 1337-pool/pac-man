@@ -7,7 +7,7 @@ required by subject section VI.8 ("Main Menu").
 
 import pygame
 
-from src.persistence.highscore import ScoreFileError, load_highscores
+from src.score_handler.highscore import ScoreFileError, load_highscores
 from src.ui.button import Button
 from src.ui.theme import (
     BLACK,

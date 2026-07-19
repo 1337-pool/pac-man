@@ -14,7 +14,7 @@ from src.ui import HomeScreen, HighscoreScreen, InstructionsScreen
 
 from src.gameplay.level import Level
 from src.gameplay.cheat import CheatManager
-from src.persistence.highscore import load_highscores, save_highscores, ScoreFileError
+from src.score_handler.highscore import load_highscores, save_highscores, ScoreFileError
 
 
 class GameState(enum.Enum):
