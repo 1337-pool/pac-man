@@ -30,7 +30,6 @@ def draw_maze(
     """
     h = len(maze)
     w = len(maze[0]) if h else 0
-    # hw = WALL_WIDTH // 2
 
     drawn: set[tuple[int, int, str]] = set()
 
@@ -98,24 +97,20 @@ def _draw_rounded_corners(
             px = board_x + x * cell_size
             py = board_y + y * cell_size
 
-            # Top-left corner
             if cell["north"] or cell["west"]:
                 if cell["north"] and cell["west"]:
                     pygame.draw.circle(surface, MAZE_BLUE, (px, py), corner_r)
 
-            # Top-right corner
             if cell["north"] or cell["east"]:
                 if cell["north"] and cell["east"]:
                     pygame.draw.circle(
                         surface, MAZE_BLUE, (px + cell_size, py), corner_r)
 
-            # Bottom-left corner
             if cell["south"] or cell["west"]:
                 if cell["south"] and cell["west"]:
                     pygame.draw.circle(
                         surface, MAZE_BLUE, (px, py + cell_size), corner_r)
 
-            # Bottom-right corner
             if cell["south"] or cell["east"]:
                 if cell["south"] and cell["east"]:
                     pygame.draw.circle(
