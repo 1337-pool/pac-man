@@ -1,49 +1,26 @@
 # Project Timeline
 
-We track work with a GitHub Projects board (3 columns: Todo / In Progress /
-Done), organized into three milestones that map to the project's natural
-build order:
+**Start Date:** July 07th
+**End Date:** July 20th
+**Total Duration:** 13 Days
 
-- **M1: Foundations** — repo scaffold, config system, maze adapter, base
-  entities. Nothing here depends on anything else; everything after depends
-  on this.
-- **M2: Full loop** — ghost AI, level assembly, scoring, highscore
-  persistence, full UI. This is where the actual game becomes playable.
-- **M3: Polish** — cheat mode, packaging/deployment, documentation.
+The project was managed using a GitHub Projects Kanban board with milestones mapped to a 13-day schedule. Communication and daily planning were handled via Discord.
 
-## Board view
+## Milestone Schedule
 
-![Kanban board](./screenshots/board-view.png)
+### M1: Foundations (July 07th - July 13th)
+* **Focus:** Repository structure, configuration system, and maze integration.
+* **Tasks Completed:** Repo setup, `config/loader.py` (JSON+comments), `config/schema.py` (validation/clamping), `maze/adapter.py` (bitmask decoding).
+* **Note:** Took slightly longer than expected to reverse-engineer the external `mazegenerator` package's bitmask encoding by reading its source directly.
 
-As of this screenshot: 6 issues Done, 2 In Progress (ghost behaviors AI,
-UI screens), 8 in Todo.
+### M2: Full Loop (July 14th - July 17th)
+* **Focus:** Core gameplay, entities, and UI integration.
+* **Tasks Completed:** `entity.py` (smooth movement), `player.py`, `ghost.py`, `ghost_behaviors.py` (BFS AI), `level.py` (collisions/pacgums), and `game.py` (state machine). UI screens developed in parallel.
+* **Note:** Ghost AI and Level assembly were grouped together to allow testing against real maze data rather than mocks.
 
-## Gantt / timeline view
+### M3: Polish & Docs (July 18th - July 20th)
+* **Focus:** Cheat mode, strict linting, packaging, and documentation.
+* **Tasks Completed:** `cheat.py` (F1 toggle), `Makefile` finalization, `mypy --strict` compliance, Itch.io packaging script, `README.md`, and management docs.
 
-![Gantt timeline](./screenshots/gantt-timeline.png)
-
-Issues are laid out against the calendar to visualize sequencing and overlap.
-Foundational issues (#2 scaffold, #3 config schema, #4 maze adapter, #5
-entities) were completed first and in parallel with early design decisions
-(e.g. inspecting the assigned `mazegenerator` package's interface before
-writing the adapter, so the adapter wasn't designed blind).
-
-## Milestones and target order
-
-| Milestone | Issues | Depends on |
-|---|---|---|
-| M1: Foundations | #2, #3, #4, #5 | — |
-| M2: Full loop | #6, #7, #8, #9, #10 (UI portion) | M1 |
-| M3: Polish | #11 (cheat), #12 (packaging) | M2 |
-| Docs (ongoing) | #13, #14 | can start early, finalized last |
-
-`#12` (packaging) is intentionally last on the board: it cannot start until
-the full game runs end-to-end, since there is nothing to package before then.
-
-## Team split
-
-- **berrabia**: config system, maze adapter, entities (player/ghost),
-  highscore persistence, project management (board, milestones, this
-  documentation).
-- **mjaber**: Figma design, UI implementation (main menu, HUD, pause menu,
-  end screens).
+## Gantt View Summary
+![Description](./screenshots/gantt.png)

@@ -1,37 +1,30 @@
 # Progress Tracking
 
-Snapshot as of the board/timeline screenshots in this directory.
+Final snapshot as of project completion (July 20th). 
 
-## Status vs. plan
+## Status vs. Plan
 
-| Milestone | Planned | Actual status | Notes |
-|---|---|---|---|
-| M1: Foundations | #2, #3, #4, #5 | ✅ All done | Completed roughly on the original plan; maze adapter took slightly longer than expected due to needing to reverse-engineer the assigned package's bitmask encoding by reading its source directly. |
-| M2: Full loop | #6, #7, #8, #9, #10 | 🟡 In progress | #9 (highscore) done. #6 (ghost) split: base state machine done, chase/flee AI behaviors deferred to be tackled together with #7 (level assembly), since they're mutually dependent. #10 (UI) started by mjaber in parallel. |
-| M3: Polish | #11, #12 | ⬜ Not started | Correctly not started yet — #12 (packaging) cannot begin until the game runs end-to-end. |
-| Docs | #13, #14 | 🟡 In progress | This document and its siblings written now, ahead of full game completion, specifically so documentation isn't rushed at the deadline. |
+| Milestone | Planned | Notes |
+|---|---|---|
+| M1: Foundations | Config, Maze Adapter | Completed on schedule. |
+| M2: Full loop | Entities, Level, Game, UI | Game fully playable end-to-end. |
+| M3: Polish | Cheats, Linting, Packaging | `mypy --strict` passed. Itch.io packaging complete. |
+| Docs | README, Management | All required sections filled. |
 
-## Deviations from original plan
+## Deviations from Original Plan
 
-- **Ghost AI and level assembly grouped together**, rather than done strictly
-  in issue-number order. Reasoning: `ghost_behaviors.py` needs a real maze +
-  player position to meaningfully test chase logic against, and `level.py`
-  needs ghosts to place in the level — building either in isolation would
-  mean testing against fake/mocked data now and rewriting later.
-- **Packaging platform changed from an initial assumption of Steam to
-  Itch.io** after checking Steam's actual requirements (a $100 fee, a
-  mandatory 30-day waiting period between payment and release, and a
-  requirement for a native desktop executable) — incompatible with a
-  free, unlisted, deadline-bound school submission. Caught before any
-  packaging work was started, so no wasted effort.
-- **Testing deprioritized for simplicity** partway through: the subject
-  explicitly marks automated tests as "not submitted or graded" (III.3), so
-  the team chose to rely on manual, documented test cases (see
-  `test_plan.md`) instead of maintaining a `tests/` directory, to keep the
-  repository smaller and reduce maintenance overhead.
+- **Ghost AI and Level Assembly grouped together:** Rather than doing them in strict issue-number order, `ghost_behaviors.py` and `level.py` were developed simultaneously. `ghost_behaviors.py` needed a real maze/player position to test chase logic, and `level.py` needed ghosts to place in the level.
+- **Packaging platform changed to Itch.io:** Initially assumed Steam, but switched to Itch.io after checking Steam's actual requirements (a $100 fee, a 30-day wait, native executable requirement) which are incompatible with a free, deadline-bound school submission.
+- **Cheat mode simplified:** All cheats (Invincibility, Ghost Freeze, Speed Boost, Timer Freeze) were mapped to a single `F1` toggle to make peer-review testing as fast as possible.
 
-## Blocking points so far
+## Blocking Points & Resolutions
 
-See `risk_analysis.md` and `team_org.md` for the full list; none have
-caused an actual schedule slip so far, since each was caught during code
-review before being merged/relied upon elsewhere.
+No team/schedule risks occurred. All technical blocking points were caught during code review before merging:
+- **Maze "42" shape collision:** The `mazegenerator` carves a "42" in the center. Initially, the player spawned inside the walls of the '4' or '2'. Resolved by calculating the exact gap between the numbers and hardcoding that as the spawn point.
+- **Movement momentum loss:** Early movement logic caused the player to stop if they pressed a direction blocked by a wall. Resolved by buffering the next direction and falling back to the current direction if the new one is blocked (smooth wall sliding).
+- **Pygame type hinting:** `mypy --strict` flagged Pygame's C-extension types. Resolved by configuring `mypy` to ignore missing imports for third-party C-extensions.
+
+# Kanban Board View:
+![Description](./screenshots/board-view.png)
+# Task Graph View:
+![Description](./screenshots/graph.png)
