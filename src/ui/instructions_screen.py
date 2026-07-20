@@ -5,6 +5,8 @@ rules in one place, as required by subject section VI.8 ("Main Menu
 -> Instructions").
 """
 
+from __future__ import annotations
+
 import pygame
 
 from src.ui.button import Button
@@ -42,6 +44,10 @@ _SECTIONS: tuple[tuple[str, tuple[str, ...]], ...] = (
         "SUPER PACGUM = 50 POINTS",
         "EDIBLE GHOST = 200 POINTS",
     )),
+    ("CHEAT MODE (F1)", (
+        "TOGGLES INVINCIBILITY, GHOST FREEZE,",
+        "SPEED BOOST, AND TIMER FREEZE.",
+    )),
 )
 
 
@@ -62,7 +68,7 @@ class InstructionsScreen:
             width=360, height=56, primary=True,
         )
 
-    def handle_event(self, event: "pygame.event.Event") -> str | None:
+    def handle_event(self, event: pygame.event.Event) -> str | None:
         """Translate a pygame event into an action, if any."""
         if self.back_button.is_clicked(event):
             return "back"
@@ -70,7 +76,7 @@ class InstructionsScreen:
             return "back"
         return None
 
-    def draw(self, surface: "pygame.Surface") -> None:
+    def draw(self, surface: pygame.Surface) -> None:
         """Render the full instructions screen onto the given surface."""
         surface.fill(BLACK)
         center_x = SCREEN_WIDTH // 2
@@ -97,16 +103,21 @@ class InstructionsScreen:
             )
             y += 26
             for line in lines:
-                draw_text(surface, line, line_font, WHITE, topleft=(left, y))
+                draw_text(
+                    surface, line, line_font, WHITE, topleft=(left, y)
+                )
                 y += 20
             y += 16
 
         draw_text(
-            surface, "THE GHOSTS", heading_font, YELLOW, topleft=(left, y))
+            surface, "THE GHOSTS", heading_font, YELLOW, topleft=(left, y)
+        )
         y += 30
         for label, color in _GHOST_LINES:
             pygame.draw.circle(surface, color, (left + 6, y + 7), 6)
-            draw_text(surface, label, line_font, WHITE, topleft=(left + 20, y))
+            draw_text(
+                surface, label, line_font, WHITE, topleft=(left + 20, y)
+            )
             y += 22
 
         self.back_button.draw(surface)

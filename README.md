@@ -19,11 +19,12 @@ between our code and the third-party maze generator.
 ## Instructions
 
 ```bash
-make install   # install dependencies
-make run       # launch the game with config.json
-make debug     # launch under pdb
-make lint      # flake8 + mypy
-make clean     # remove caches
+make install     # install dependencies
+make run         # launch the game with config.json
+make debug       # launch under pdb
+make lint        # flake8 + mypy
+make lint-strict # flake8 + mypy --strict
+make clean       # remove caches
 ```
 
 Manual launch:
@@ -42,10 +43,9 @@ correctly — comment detection is disabled while inside a string literal.
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `highscore_filename` | string | `"highscores.json"` | Path to the persistent highscore file |
+| `highscore_filename` | string | `"highscore.json"` | Path to the persistent highscore file |
 | `levels` | list of `{width, height}` | 10 entries, 21×21 each | Maze dimensions per level |
 | `lives` | int | `3` | Starting player lives |
-| `pacgum` | int | `42` | (reserved for pacgum count tuning) |
 | `points_per_pacgum` | int | `10` | Score awarded per pacgum eaten |
 | `points_per_super_pacgum` | int | `50` | Score awarded per super-pacgum eaten |
 | `points_per_ghost` | int | `200` | Score awarded per edible ghost eaten |
@@ -78,13 +78,9 @@ file it wouldn't later be able to read back):
   violating the rules above, raises a clean `ScoreFileError` — never a raw
   traceback.
 
-We chose a flat JSON array (over, say, a database) because the top-10 list is
-small, the access pattern is simple (load once at startup, save once at game
-end), and it keeps the project dependency-free.
-
 ## Maze Generation
 
-We were assigned the `mazegenerator` package (from another 42 group), used
+We were assigned the `mazegenerator` package, used
 as-is via `src/maze/adapter.py` — the only file in our codebase that imports it
 directly.
 
@@ -105,9 +101,9 @@ knows the bitmask encoding — the rest of the codebase only speaks in terms of
 these wall dictionaries.
 
 We deliberately do not use the library's own `entry_cell`/`exit_cell`/
-`shortest_path` concepts — our player spawn point (middle of the maze) and
-ghost pathing are computed independently in `gameplay/level.py`, decoupling us
-from the library's own notion of entry/exit.
+`shortest_path` concepts — our player spawn point (the gap in the "42" shape carved
+by the generator) and ghost pathing are computed independently in 
+`gameplay/level.py`, decoupling us from the library's own notion of entry/exit.
 
 Per VI.1: level 1 always uses the fixed seed from config (`seed`); subsequent
 levels use freshly randomized seeds, so no two playthroughs beyond level 1 are
@@ -115,11 +111,18 @@ identical.
 
 ## Implementation
 
-TODO: expand once the mandatory part (levels, UI, cheat mode) is fully wired.
-Current state: config loading/validation, maze generation/decoding, player and
-ghost entities, and highscore persistence are complete and independently
-tested. Level assembly, the game loop, cheat mode, and the graphical UI are in
-progress.
+The game is fully implemented and playable end-to-end. The core game loop is
+managed by `gameplay/game.py`, which acts as a finite state machine handling
+navigation between the Main Menu, Highscores, Instructions, Playing, Paused,
+Game Over, and Victory screens. 
+
+`gameplay/level.py` assembles the maze, player, ghosts, and pacgums.
+
+A `CheatManager` class handles peer-review cheats (invisibilty, ghost freeze,
+speed boost, and timer freeze) all toggled simultaneously via the `F1` key. The
+UI is rendered using Pygame, drawing a classic blue-walled maze, animated 
+entities (2-frame sprite animation for the player), and a fully interactive HUD 
+and menu system.
 
 ## General Software Architecture
 
@@ -132,24 +135,25 @@ src/
 ├── maze/
 │   └── adapter.py        isolates mazegenerator; decodes bitmask -> wall-dicts
 ├── entities/
-│   ├── entity.py         base class: position, can_move(), move()
-│   ├── player.py         lives, score, respawn, lose_life()
-│   ├── ghost.py           chasing/edible/eaten state machine, respawn timer
-│   └── ghost_behaviors.py  (in progress) chase/flee movement strategies
+│   ├── entity.py         base class: position, can_move(), move(), smooth interp
+│   ├── player.py         lives, score, respawn, 2-frame sprite animation
+│   ├── ghost.py           chasing/edible/eaten state machine, teleport-on-eaten
+│   └── ghost_behaviors.py  full BFS pathfinding + 4 distinct ghost personalities
 ├── gameplay/
-│   ├── level.py           (in progress) assembles maze+player+ghosts+timer
-│   ├── game.py            (in progress) main loop, state machine
-│   ├── scoring.py         (in progress) point-value wiring
-│   └── cheat.py            (in progress) peer-review cheat toggles
-├── persistence/
+│   ├── level.py           assembles maze+player+ghosts+pacgums, handles collisions
+│   ├── game.py            main loop, state machine, HUD, screen routing
+│   └── cheat.py            peer-review cheat toggles (F1)
+├── score_handler/
 │   └── highscore.py       load/save/validate top-10 JSON highscores
-└── ui/                     (in progress) menu, HUD, pause, end screens
+└── ui/                     
+    ├── theme.py            colors, fonts, load_sprite()
+    ├── button.py           reusable UI button widget
+    ├── maze_renderer.py    draws classic blue walls with rounded corners
+    ├── home_screen.py      main menu
+    ├── highscore_screen.py top 10 leaderboard view
+    └── instructions_screen.py controls and rules reference
 ```
 
-Design principle followed throughout: each "external boundary" (config file on
-disk, the third-party maze package, the highscore file) is wrapped by exactly
-one module that owns all the messy validation/error-handling, and exposes a
-clean, trusted interface to everything else.
 
 ## Project Management
 
@@ -159,30 +163,18 @@ and tracked with a Gantt-style timeline view. See [`management/`](./management)
 for the timeline, risk analysis, team organization, progress tracking, and
 acceptance test plan, including board/timeline screenshots.
 
-Team: berrabia (config, maze adapter, entities, ghosts, highscore, project
-management/board), mjaber (Figma design, UI implementation).
+Team:
+- mjaber (Figma design, UI implementation, ghosts algo, game loop),
+- berrabia (config, maze adapter, entities, ghosts, highscore, project
+management/board).
 
 ## Resources
 
+- https://www.youtube.com/watch?v=9H27CimgPsQ&pp=ygUNcGFjbWFuIHB5dGhvbg%3D%3D
 - [Pac-Man (Wikipedia)](https://en.wikipedia.org/wiki/Pac-Man) — original game
   history and ghost AI behavior reference.
 - Python official docs: `json`, `pathlib`, `typing`.
-- `mazegenerator` package documentation (assigned peer package) — inspected
-  directly via `help()`/`dir()` and source reading rather than external docs.
+- `mazegenerator` package documentation — inspected directly.
 
-**AI usage:** Claude (Anthropic) was used throughout this project as a guided
-mentor, not a code generator. For every module (`config/loader.py`,
-`config/schema.py`, `maze/adapter.py`, `entities/entity.py`,
-`entities/player.py`, `entities/ghost.py`, `persistence/highscore.py`), the
-workflow was: Claude explained the required behavior and design trade-offs,
-one function at a time; the author wrote the code themselves; Claude reviewed
-each draft, identified real bugs by tracing through concrete test cases (e.g.
-a `for`/`range()` loop that silently failed to skip characters, a seed-reuse
-bug that would have made every level identical, a Python `bool`-is-a-subclass-
-of-`int` gotcha in config validation, a block-comment terminator that
-matched on any `*` instead of the `*/` pair, an unhandled string-literal case
-that could corrupt JSON containing `#`), and the author then fixed the code
-themselves based on that feedback. Claude also helped scaffold the initial
-repository structure, GitHub Projects board/milestones, and this documentation.
-No production code in this repository was written directly by AI without the
-author writing and understanding it first.
+**AI usage:**
+AI  was used strictly as a mentor and reviewer, not a code generator. AI helped explain design trade-offs, reviewed drafts to catch logic bugs and edge cases, and assisted in scaffolding the repository structure and documentation. No production code in this repository was written directly by AI.

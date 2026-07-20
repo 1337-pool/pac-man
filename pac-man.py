@@ -19,8 +19,8 @@ def main() -> None:
     try:
         game = Game(config)
         game.run()
-    except Exception as e:
-        print(f"Error: {e}")
+    except BaseException as e:
+        print(f"Error {e}")
         sys.exit(1)
 
 

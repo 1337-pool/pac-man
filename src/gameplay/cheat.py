@@ -12,6 +12,7 @@ class CheatManager:
         self.invisible: bool = False
         self.freeze_ghosts: bool = False
         self.freeze_timer: bool = False
+        self.speed_up: bool = False
         self.all_active: bool = False
 
     def toggle_all_cheats(self) -> None:

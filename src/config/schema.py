@@ -4,7 +4,7 @@ DEFAULT_LEVEL_COUNT = 10
 DEFAULT_WIDTH = 20
 DEFAULT_HEIGHT = 20
 MIN_DIMENSION = 9
-MAX_DIMENSION = 50
+MAX_DIMENSION = 51
 
 DEFAULTS: Dict[str, Any] = {
     "highscore_filename": "highscore.json",
