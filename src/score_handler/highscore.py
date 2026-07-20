@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 import json
 
 class ScoreFileError(Exception):
@@ -20,42 +21,43 @@ def _validate_entries(data: list) -> None:
     except AttributeError:
         raise ScoreFileError("score file have to be list of players ;)")
 
-    def load_highscores(path: str) -> list[dict[str, Any]]:
-        """Load and validate highscores from a JSON file."""
-        if not Path(path).is_file():
-            return []
 
-        try:
-            with open(path) as f:
-                raw = f.read()
-        except OSError as e:
-            raise ScoreFileError(f"error with the score file: {e}")
+def load_highscores(path: str) -> list[dict[str, Any]]:
+    """Load and validate highscores from a JSON file."""
+    if not Path(path).is_file():
+        return []
 
-        if not raw.strip():
-            return []
+    try:
+        with open(path) as f:
+            raw = f.read()
+    except OSError as e:
+        raise ScoreFileError(f"error with the score file: {e}")
 
-        try:
-            data = json.loads(raw)
-        except json.JSONDecodeError:
-            raise ScoreFileError("error with the score file format")
+    if not raw.strip():
+        return []
 
-        _validate_entries(data)
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        raise ScoreFileError("error with the score file format")
 
-        if len(data) > 10:
-            raise ScoreFileError("score file have more than 10 players ;)")
+    _validate_entries(data)
 
-        return data
+    if len(data) > 10:
+        raise ScoreFileError("score file have more than 10 players ;)")
+
+    return data
 
 
-    def save_highscores(path: str, scores: list[dict[str, Any]]) -> None:
-        """Validate, sort, and save highscores to a JSON file."""
-        _validate_entries(scores)
+def save_highscores(path: str, scores: list[dict[str, Any]]) -> None:
+    """Validate, sort, and save highscores to a JSON file."""
+    _validate_entries(scores)
 
-        scores = sorted(scores, key=lambda elem: elem["score"], reverse=True)
-        scores = scores[:10]
+    scores = sorted(scores, key=lambda elem: elem["score"], reverse=True)
+    scores = scores[:10]
 
-        try:
-            with open(path, "w") as f:
-                json.dump(scores, f, indent=4)
-        except OSError as e:
-            raise ScoreFileError(f"scores file error: {e}")
+    try:
+        with open(path, "w") as f:
+            json.dump(scores, f, indent=4)
+    except OSError as e:
+        raise ScoreFileError(f"scores file error: {e}")

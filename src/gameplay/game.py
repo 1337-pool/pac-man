@@ -90,7 +90,6 @@ class Game:
             height=height,
             seed=seed,
             lives=old_lives,
-            img="pacman",
             cheat_manager=self.cheats,
             points_per_ghost=self.config.get("points_per_ghost", 200),
             points_per_pacgum=self.config.get("points_per_pacgum", 10),
@@ -101,9 +100,8 @@ class Game:
         self.level.player.score = old_score
         
         # Apply speed boost immediately if cheat is already active
-        if self.cheats.speed_boost:
+        if self.cheats.all_active:
             self.level.player.move_frames = max(12, self.default_move_frames - 2)
-            
         self.level_start_time = time.time()
         self.elapsed_time = 0.0
         self.next_dir = "east"  # Give player initial momentum
@@ -203,7 +201,7 @@ class Game:
         self.level.update()
 
         # --- TIMER FREEZE LOGIC ---
-        if not self.cheats.freeze_timer:
+        if not self.cheats.all_active:
             self.elapsed_time = time.time() - self.level_start_time
         else:
             # Keep syncing the start time so elapsed_time doesn't jump when unfrozen

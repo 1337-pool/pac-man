@@ -8,13 +8,6 @@ from typing import Any
 
 GhostState = Literal["chasing", "edible", "eaten"]
 
-GHOST_NAMES: dict[int, str] = {
-    0: "Blinky",
-    1: "Pinky",
-    2: "Inky",
-    3: "Clyde",
-}
-
 
 class Ghost(Entity):
     def __init__(
@@ -91,9 +84,8 @@ class Ghost(Entity):
             sprite_name = "ghost_blue"
 
         sprite = load_sprite(sprite_name, cell_size)
-        if sprite is not None:
-            rect = sprite.get_rect(center=(cx, cy))
-            surface.blit(sprite, rect)
+        rect = sprite.get_rect(center=(cx, cy))
+        surface.blit(sprite, rect)
 
     def think(
         self,

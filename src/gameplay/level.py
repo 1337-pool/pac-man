@@ -4,7 +4,7 @@ per-tick update loop tying movement, AI, and collisions together.
 
 from ..maze.adapter import build_level_maze
 from ..entities.player import Player
-from ..entities.ghost import Ghost, GHOST_NAMES
+from ..entities.ghost import Ghost
 from ..entities.ghost_behaviors import _build_scatter_corners
 from ..gameplay.cheat import CheatManager
 
@@ -15,6 +15,12 @@ _GHOST_SPRITES: list[int] = [
     "ghost_orange",
 ]
 
+GHOST_NAMES: dict[int, str] = {
+    0: "Blinky",
+    1: "Pinky",
+    2: "Inky",
+    3: "Clyde",
+}
 
 class Level:
     def __init__(
@@ -23,7 +29,6 @@ class Level:
         height: int,
         seed: int,
         lives: int,
-        img: str,
         cheat_manager: CheatManager,
         points_per_ghost: int = 200,
         points_per_pacgum: int = 10,
@@ -47,7 +52,7 @@ class Level:
         self.corners: tuple[tuple[int, int], ...] = tuple(ghost_corners.values())
 
         self.player: Player = Player(
-            x=self.middle[0], y=self.middle[1], lives=lives, img=img,
+            x=self.middle[0], y=self.middle[1], lives=lives
         )
 
         self.ghosts: list[Ghost] = [
@@ -119,7 +124,7 @@ class Level:
 
         blinky_x, blinky_y = self._blinky_position()
 
-        if not self.cheat_manager.freeze_ghosts:
+        if not self.cheat_manager.all_active:
             for ghost in self.ghosts:
                 ghost.update()  # advance eaten/edible timers
                 if not ghost.is_moving:
@@ -152,7 +157,7 @@ class Level:
                 self.player.add_score(self.points_per_ghost)
                 ghost.get_eaten()
             elif ghost.is_chasing():
-                if not self.cheat_manager.invincible:
+                if not self.cheat_manager.all_active:
                     self.player.lose_life(self.middle)
 
     def _check_pacgums(self) -> None:
