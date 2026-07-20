@@ -6,7 +6,7 @@ screen never disagrees with what actually gets saved.
 """
 
 import pygame
-
+from typing import Any
 from src.score_handler.highscore import ScoreFileError, load_highscores
 from src.ui.button import Button
 from src.ui.theme import (
@@ -44,7 +44,7 @@ class HighscoreScreen:
             width=320, height=56, primary=True,
         )
 
-    def _load_scores(self) -> list[dict]:
+    def _load_scores(self) -> Any:
         """Return up to the top 10 highscores, or [] if unreadable.
 
         Never raises: a missing/corrupt file must not crash the

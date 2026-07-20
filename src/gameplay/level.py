@@ -1,26 +1,17 @@
-"""Assembles one playable level: maze, player, ghosts, and the
-per-tick update loop tying movement, AI, and collisions together.
-"""
-
 from ..maze.adapter import build_level_maze
 from ..entities.player import Player
 from ..entities.ghost import Ghost
 from ..entities.ghost_behaviors import _build_scatter_corners
 from ..gameplay.cheat import CheatManager
 
-_GHOST_SPRITES: list[int] = [
+
+_GHOST_SPRITES: list[str] = [
     "ghost_red",
     "ghost_pink",
     "ghost_blue",
     "ghost_orange",
 ]
 
-GHOST_NAMES: dict[int, str] = {
-    0: "Blinky",
-    1: "Pinky",
-    2: "Inky",
-    3: "Clyde",
-}
 
 class Level:
     def __init__(
@@ -40,8 +31,9 @@ class Level:
         self.points_per_pacgum: int = points_per_pacgum
         self.points_per_super_pacgum: int = points_per_super_pacgum
         self.cheat_manager = cheat_manager
-
-        self.maze: list[list[dict[str, bool]]] = build_level_maze(width, height, seed)
+        self.maze: list[
+            list[
+                dict[str, bool]]] = build_level_maze(width, height, seed)
 
         shape_w, shape_h = 7, 5
         start_x_42 = int((width - shape_w) / 2)
@@ -49,7 +41,9 @@ class Level:
         self.middle: tuple[int, int] = (start_x_42 + 3, start_y_42 + 2)
 
         ghost_corners = _build_scatter_corners(width, height)
-        self.corners: tuple[tuple[int, int], ...] = tuple(ghost_corners.values())
+        self.corners: tuple[
+            tuple[
+                int, int], ...] = tuple(ghost_corners.values())
 
         self.player: Player = Player(
             x=self.middle[0], y=self.middle[1], lives=lives
@@ -57,7 +51,6 @@ class Level:
 
         self.ghosts: list[Ghost] = [
             Ghost(
-                # name=GHOST_NAMES[i],
                 x=ghost_corners[i][0],
                 y=ghost_corners[i][1],
                 home=ghost_corners[i],
@@ -67,11 +60,9 @@ class Level:
             for i in range(4)
         ]
 
-        # Populate pacgums and super-pacgums
         self.pacgums: set[tuple[int, int]] = set()
         self.super_pacgums: set[tuple[int, int]] = set()
-        
-        # Replicate the exact "42" shape from the mazegenerator code
+
         ft_small = [
             [1, 0, 0, 0, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 1],
@@ -81,9 +72,8 @@ class Level:
         ]
         shape_h = len(ft_small)
         shape_w = len(ft_small[0])
-        
+
         shape_42_blocks: set[tuple[int, int]] = set()
-        # mazegenerator only adds the 42 if the maze is large enough
         if width >= shape_w * 2 and height >= shape_h * 2:
             start_y = int((height - shape_h) / 2)
             start_x = int((width - shape_w) / 2)
@@ -95,18 +85,13 @@ class Level:
         for x in range(width):
             for y in range(height):
                 pos = (x, y)
-                
-                # 1. Skip player spawn point
-                if pos == self.middle:
+
+                if pos in shape_42_blocks:  # skip 42
                     continue
-                
-                # 2. Skip ONLY the solid wall blocks of the "42"
-                if pos in shape_42_blocks:
-                    continue
-                
-                # 3. Place super-pacgums at corners, pacgums everywhere else
-                if pos in self.corners:
+
+                if pos in self.corners:  # supergum
                     self.super_pacgums.add(pos)
+
                 else:
                     self.pacgums.add(pos)
 
@@ -126,7 +111,7 @@ class Level:
 
         if not self.cheat_manager.all_active:
             for ghost in self.ghosts:
-                ghost.update()  # advance eaten/edible timers
+                ghost.update()
                 if not ghost.is_moving:
                     ghost.think(
                         self.maze,
@@ -143,12 +128,7 @@ class Level:
         self._check_pacgums()
 
     def _check_collisions(self) -> None:
-        """Handle player/ghost collisions on the integer grid.
-
-        Only checks exact cell overlap — good enough at grid-cell
-        resolution, since both player and ghosts move one cell at a
-        time even though rendering is interpolated.
-        """
+        """Handle player/ghost collisions"""
         for ghost in self.ghosts:
             if (ghost.x, ghost.y) != (self.player.x, self.player.y):
                 continue
@@ -163,16 +143,14 @@ class Level:
     def _check_pacgums(self) -> None:
         """Check if the player's current cell overlaps with any pacgums."""
         pos = (self.player.x, self.player.y)
-        
+
         if pos in self.pacgums:
             self.pacgums.remove(pos)
             self.player.add_score(self.points_per_pacgum)
-            
+
         if pos in self.super_pacgums:
             self.super_pacgums.remove(pos)
             self.player.add_score(self.points_per_super_pacgum)
-            
-            # Trigger power-up state on all ghosts
             for ghost in self.ghosts:
                 ghost.make_edible()
 

@@ -19,15 +19,15 @@ optimal and never gets stuck.
 """
 
 from __future__ import annotations
-
+# from typing import Any
 import random
 from collections import deque
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from src.entities.ghost import Ghost
 
-DIRECTIONS: list[str] = ["north", "east", "south", "west"]
+DIRECTIONS: list[Any] = ["north", "east", "south", "west"]
 OPPOSITE: dict[str, str] = {
     "north": "south",
     "south": "north",
@@ -44,7 +44,9 @@ SCATTER_CORNERS: dict[int, tuple[int, int]] = {
 }
 
 
-def _build_scatter_corners(width: int, height: int) -> dict[int, tuple[int, int]]:
+def _build_scatter_corners(
+        width: int,
+        height: int) -> dict[int, tuple[int, int]]:
     """Return scatter corner tiles adjusted for the maze dimensions."""
     return {
         0: (width - 1, 0),       # Blinky — top-right
@@ -81,7 +83,7 @@ def bfs_path(
     maze: list[list[dict[str, bool]]],
     start: tuple[int, int],
     goal: tuple[int, int],
-) -> list[tuple[int, int]]:
+) -> Any:
     """BFS shortest path from *start* to *goal* on the maze grid.
 
     Returns a list of (x, y) cells from start to goal inclusive,
@@ -90,7 +92,7 @@ def bfs_path(
     if start == goal:
         return [start]
     visited: set[tuple[int, int]] = {start}
-    queue: deque[tuple[int, int], list[tuple[int, int]]] = deque()
+    queue: Any = deque()
     queue.append((start, [start]))
     while queue:
         (cx, cy), path = queue.popleft()

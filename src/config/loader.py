@@ -1,5 +1,7 @@
 import pathlib
 import json
+from typing import Any
+
 
 class ParsingError(Exception):
     pass
@@ -42,7 +44,8 @@ def strip_comments(s: str) -> str:
 # o hadi: {"name": "a#b"}
 # o filenotfound o invalid json o permission error
 
-def load_config(path: str) -> dict:
+
+def load_config(path: str) -> Any:
 
     if pathlib.Path(path).suffix != ".json":
         raise ParsingError("invalid file suffix")

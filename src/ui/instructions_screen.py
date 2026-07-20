@@ -101,7 +101,8 @@ class InstructionsScreen:
                 y += 20
             y += 16
 
-        draw_text(surface, "THE GHOSTS", heading_font, YELLOW, topleft=(left, y))
+        draw_text(
+            surface, "THE GHOSTS", heading_font, YELLOW, topleft=(left, y))
         y += 30
         for label, color in _GHOST_LINES:
             pygame.draw.circle(surface, color, (left + 6, y + 7), 6)

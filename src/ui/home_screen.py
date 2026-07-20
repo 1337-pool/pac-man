@@ -6,7 +6,7 @@ required by subject section VI.8 ("Main Menu").
 """
 
 import pygame
-
+from typing import Any
 from src.score_handler.highscore import ScoreFileError, load_highscores
 from src.ui.button import Button
 from src.ui.theme import (
@@ -55,7 +55,7 @@ class HomeScreen:
             "EXIT", (center_x, 672), width=320, height=48,
         )
 
-    def _load_preview_scores(self) -> list[dict]:
+    def _load_preview_scores(self) -> Any:
         """Return up to the top 4 highscores, or an empty list on error.
 
         Never raises: a missing/corrupt highscore file must not crash
@@ -94,7 +94,8 @@ class HomeScreen:
         dot_gap = 48
         colors = (YELLOW, *GHOST_COLORS)
         start_x = center_x - (len(colors) - 1) * dot_gap // 2
-        sprite_names = ["pacman", "ghost_red", "ghost_pink", "ghost_blue", "ghost_orange"]
+        sprite_names = [
+            "pacman", "ghost_red", "ghost_pink", "ghost_blue", "ghost_orange"]
 
         for i, name in enumerate(sprite_names):
             sprite = load_sprite(name, dot_radius * 2)

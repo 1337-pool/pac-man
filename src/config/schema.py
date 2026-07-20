@@ -39,7 +39,7 @@ def _clamp_dimension(value: Any, default: int) -> int:
     return value
 
 
-def _validate_levels(raw_levels: Any) -> List[Dict[str, int]]:
+def _validate_levels(raw_levels: Any) -> Any:
     """
     Validate/clamp the levels list, padding to the minimum count.
     """

@@ -39,7 +39,8 @@ class Player(Entity):
         self.score += points
 
     def lose_life(self, middle: tuple[int, int]) -> None:
-        """Decrement lives by 1 and respawn at the specified middle coordinate."""
+        """Decrement lives by 1 and respawn at
+        the specified middle coordinate."""
         if self.lives >= 1:
             self.lives -= 1
             self.respawn(middle[0], middle[1])

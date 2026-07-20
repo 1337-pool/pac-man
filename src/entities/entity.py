@@ -13,10 +13,11 @@ class Entity:
         self.render_x: float = float(x)
         self.render_y: float = float(y)
 
-    def can_move(self, maze: list, direction: str) -> bool:
+    def can_move(self, maze: list[
+            list[dict[str, bool]]], direction: str) -> bool:
         return not maze[self.y][self.x][direction]
 
-    def move(self, maze: list, direction: str) -> bool:
+    def move(self, maze: list[list[dict[str, bool]]], direction: str) -> bool:
 
         if not self.can_move(maze, direction):
             return False

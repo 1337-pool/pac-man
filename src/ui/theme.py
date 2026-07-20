@@ -6,7 +6,6 @@ web mockups: black background, yellow primary accent, and the four
 classic ghost colors.
 """
 
-import pathlib
 from typing import Any
 import pygame
 
@@ -68,7 +67,7 @@ _sprite_cache: dict[tuple[str, int], "pygame.Surface | None"] = {}
 def load_sprite(name: str, height: int) -> Any:
     """Load  a sprite PNG from assets/images, scaled to a height."""
 
-    surface: "pygame.Surface | None"
+    surface: "Any"
     try:
         path = f"assets/images/{name}.png"
         raw = pygame.image.load(str(path)).convert_alpha()
@@ -88,7 +87,7 @@ def draw_text(
     color: tuple[int, int, int],
     center: tuple[int, int] | None = None,
     topleft: tuple[int, int] | None = None,
-) -> "pygame.Rect":
+) -> "Any":
     """Render text onto a surface, anchored by center or topleft.
 
     Exactly one of center/topleft must be given. Returns the rect the

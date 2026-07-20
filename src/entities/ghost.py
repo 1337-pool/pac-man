@@ -4,7 +4,7 @@ from typing import Literal
 from src.entities.entity import Entity
 from src.entities.ghost_behaviors import choose_direction
 from src.ui.theme import load_sprite
-from typing import Any
+import pygame
 
 GhostState = Literal["chasing", "edible", "eaten"]
 
@@ -40,7 +40,8 @@ class Ghost(Entity):
     def update(self, respawn_delay: float = 5.0) -> None:
         if self.state == "edible" and time.time() >= self._frightened_timer:
             self.state = "chasing"
-        if self.state == "eaten" and time.time() - self.eaten_at >= respawn_delay:
+        if (self.state == "eaten" and
+                time.time() - self.eaten_at >= respawn_delay):
             self.respawn()
 
     def respawn(self) -> None:
@@ -73,7 +74,6 @@ class Ghost(Entity):
         """Draw the ghost at its smoothly interpolated pixel position."""
         cx = board_x + self.render_x * cell_size + cell_size // 2
         cy = board_y + self.render_y * cell_size + cell_size // 2
-        radius = cell_size // 2
 
         if self.state == "eaten":
             self.update()
