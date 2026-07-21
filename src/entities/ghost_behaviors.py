@@ -19,7 +19,6 @@ optimal and never gets stuck.
 """
 
 from __future__ import annotations
-# from typing import Any
 import random
 from collections import deque
 from typing import TYPE_CHECKING, Any
@@ -35,24 +34,16 @@ OPPOSITE: dict[str, str] = {
     "west": "east",
 }
 
-# Scatter targets: each ghost retreats to its own corner of the maze.
-SCATTER_CORNERS: dict[int, tuple[int, int]] = {
-    0: (0, 0),       # Blinky — top-left
-    1: (0, 0),       # Pinky  — top-right (adjusted below if needed)
-    2: (0, 0),       # Inky   — bottom-left (adjusted below if needed)
-    3: (0, 0),       # Clyde  — bottom-right (adjusted below if needed)
-}
-
 
 def _build_scatter_corners(
         width: int,
         height: int) -> dict[int, tuple[int, int]]:
     """Return scatter corner tiles adjusted for the maze dimensions."""
     return {
-        0: (width - 1, 0),       # Blinky — top-right
-        1: (0, 0),               # Pinky  — top-left
-        2: (width - 1, height - 1),  # Inky   — bottom-right
-        3: (0, height - 1),      # Clyde  — bottom-left
+        0: (width - 1, 0),
+        1: (0, 0),
+        2: (width - 1, height - 1),
+        3: (0, height - 1),
     }
 
 
@@ -149,11 +140,9 @@ def _target_tile(
     corners = _build_scatter_corners(maze_w, maze_h)
 
     if ghost.id == 0:
-        # Blinky: direct chase
         return (player_x, player_y)
 
     if ghost.id == 1:
-        # Pinky: ambush — target 4 tiles ahead of player
         tx, ty = player_x, player_y
         for _ in range(4):
             if player_dir == "north":
@@ -167,7 +156,6 @@ def _target_tile(
         return (tx, ty)
 
     if ghost.id == 2:
-        # Inky: vector from Blinky through 2-ahead-of-player, doubled
         ax, ay = player_x, player_y
         if player_dir == "north":
             ay -= 2
@@ -181,7 +169,6 @@ def _target_tile(
         vy = ay - blinky_y
         return (ax + vx, ay + vy)
 
-    # Clyde (id=3): chase if far, scatter if close
     dist = _manhattan((ghost.x, ghost.y), (player_x, player_y))
     if dist >= 8:
         return (player_x, player_y)
@@ -211,7 +198,6 @@ def choose_direction(
     current_dir = getattr(ghost, "direction", None)
     back = OPPOSITE[current_dir] if current_dir else None
 
-    # Gather valid moves (no wall, not reversing)
     valid: list[tuple[str, int, int]] = []
     for d in DIRECTIONS:
         if d == back:
@@ -229,7 +215,6 @@ def choose_direction(
             if 0 <= nx < maze_w and 0 <= ny < maze_h:
                 valid.append((d, nx, ny))
 
-    # If no valid moves (dead end with only reverse), allow reverse
     if not valid:
         for d in DIRECTIONS:
             if not maze[y][x][d]:
@@ -248,29 +233,23 @@ def choose_direction(
     if not valid:
         return None
 
-    # Frightened: pick a random valid direction
     if ghost.is_edible():
         return random.choice(valid)[0]
 
-    # Eaten: BFS shortest path home
     if ghost.is_eaten():
         d = bfs_direction(maze, (x, y), ghost.home)
         if d and any(vd == d for vd, _, _ in valid):
             return d
-        # fallback: pick closest valid move to home
         valid.sort(key=lambda v: _manhattan((v[1], v[2]), ghost.home))
         return valid[0][0]
 
-    # Scatter: target own corner
     if scatter:
         target = corners.get(ghost.id, (0, 0))
     else:
-        # Chase: personality-specific targeting
         target = _target_tile(
             ghost, player_x, player_y, player_dir,
             blinky_x, blinky_y, maze_w, maze_h,
         )
 
-    # Pick the valid move whose neighbor cell is closest to the target
     valid.sort(key=lambda v: _manhattan((v[1], v[2]), target))
     return valid[0][0]

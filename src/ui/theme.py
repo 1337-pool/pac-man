@@ -9,6 +9,8 @@ classic ghost colors.
 from typing import Any
 import pygame
 
+from src.utils.paths import resource_path
+
 BLACK: tuple[int, int, int] = (10, 10, 10)
 CARD: tuple[int, int, int] = (26, 26, 26)
 WHITE: tuple[int, int, int] = (255, 255, 255)
@@ -69,7 +71,7 @@ def load_sprite(name: str, height: int) -> Any:
 
     surface: "Any"
     try:
-        path = f"assets/images/{name}.png"
+        path = resource_path(f"assets/images/{name}.png")
         raw = pygame.image.load(str(path)).convert_alpha()
         scale = height / raw.get_height()
         new_size = (max(1, round(raw.get_width() * scale)), height)
